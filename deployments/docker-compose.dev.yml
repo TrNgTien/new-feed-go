@@ -1,0 +1,44 @@
+version: "3"
+
+networks:
+  new-feed-network:
+
+services:
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning
+    networks:
+      - new-feed-network
+
+  new-feed-minio:
+    image: "bitnami/minio:2024.4.6"
+    container_name: new-feed-minio
+    restart: always
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      - MINIO_ROOT_USER=root
+      - MINIO_ROOT_PASSWORD=root.123
+    volumes:
+      - ./volumes/minio-data:/bitnami/minio/data
+    networks:
+      - saarm-network
+
+  mysql:
+    image: mysql:8.3.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: new_feed
+      MYSQL_DATABASE: new-feed
+    ports:
+        - "3306:3306"
+    volumes:
+      - ./volumes/mysql-data:/bitnami/mysql/data
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - new-feed-network
