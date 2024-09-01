@@ -6,7 +6,7 @@ networks:
 services:
   redis:
     image: redis:6.2-alpine
-    container_name: redis
+    container_name: new-feed-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -25,12 +25,13 @@ services:
       - MINIO_ROOT_USER=root
       - MINIO_ROOT_PASSWORD=root.123
     volumes:
-      - ./volumes/minio-data:/bitnami/minio/data
+      - ../volumes/minio-data:/bitnami/minio/data
     networks:
-      - saarm-network
+      - new-feed-network
 
   mysql:
     image: mysql:8.3.0
+    container_name: new-feed-mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: new_feed
@@ -38,7 +39,7 @@ services:
     ports:
         - "3306:3306"
     volumes:
-      - ./volumes/mysql-data:/bitnami/mysql/data
+      - ../volumes/mysql-data:/bitnami/mysql/data
       - /etc/localtime:/etc/localtime:ro
     networks:
       - new-feed-network

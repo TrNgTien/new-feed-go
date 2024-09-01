@@ -5,16 +5,15 @@ import (
 	min "github.com/minio/minio-go"
 )
 
-type MinioClient struct {
-	client *min.Client
-}
+var client *min.Client
 
-func (c *MinioClient) Init() {
+func Init() {
+
 	var (
 		err error
 	)
 
-	c.client, err = min.New(utils.GetValueEnv("APP_ENV_MINIO_ENDPOINT", "localhost:9000"),
+	client, err = min.New(utils.GetValueEnv("APP_ENV_MINIO_ENDPOINT", "localhost:9000"),
 		utils.GetValueEnv("APP_ENV_MINIO_ACCESS_KEY", "minio-root"),
 		utils.GetValueEnv("APP_ENV_MINIO_SECRET_KEY", "minio-secret-key"),
 		false)
@@ -24,6 +23,6 @@ func (c *MinioClient) Init() {
 	}
 }
 
-func (c *MinioClient) GetClient() *min.Client {
-	return c.client
+func GetClient() *min.Client {
+	return client
 }
