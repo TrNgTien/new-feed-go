@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/TrNgTien/new-feed-go/internal/utils"
 	"github.com/TrNgTien/new-feed-go/internal/wiring"
 	"github.com/spf13/cobra"
 )
@@ -17,6 +18,7 @@ func server() *cobra.Command {
 		Use:  "new-feed-go",
 		Long: "Start standalone server for new-feed-go",
 		RunE: func(cmd *cobra.Command, _ []string) error {
+			utils.NewValidateStruct()
 			app, cleanup, err := wiring.InitializeServer()
 
 			defer cleanup()

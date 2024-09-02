@@ -14,10 +14,10 @@ func R200(c *gin.Context, data any) {
 		})
 }
 
-func R400(c *gin.Context) {
+func R400(c *gin.Context, msg string) {
 	c.JSON(http.StatusBadRequest,
 		gin.H{
-			"message": "Bad request!",
+			"message": msg,
 			"status":  "error",
 		})
 }

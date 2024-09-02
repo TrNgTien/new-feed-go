@@ -10,7 +10,8 @@ import (
 func AuthRoutes(rg *gin.RouterGroup) {
 	auth := rg.Group(constants.AUTH_PATH)
 
-	authController := controller.NewAuthController(services.NewAuthService())
+	authService := services.NewAuthService()
+	authController := controller.NewAuthController(authService)
 	auth.POST("sign-in", authController.Login)
 	auth.POST("sign-up", authController.Register)
 	auth.POST("logout", authController.Logout)

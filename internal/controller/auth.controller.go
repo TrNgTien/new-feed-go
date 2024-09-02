@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"fmt"
-
 	"github.com/TrNgTien/new-feed-go/internal/helpers/response"
 	"github.com/TrNgTien/new-feed-go/internal/services"
 	"github.com/TrNgTien/new-feed-go/internal/utils"
@@ -17,22 +15,27 @@ func NewAuthController(service services.AuthService) *AuthController {
 	return &AuthController{Service: service}
 }
 
-type LoginPayload struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+type userPayload struct {
+	Username string `json:"username" validate:"required" errorMsg:"Username is required"`
+	Password string `json:"password" validate:"required" errorMsg:"Password is required"`
 }
 
 func (ac *AuthController) Login(c *gin.Context) {
-	var lp LoginPayload
-	if err := utils.BindingBody(c, &lp); err != nil {
-		fmt.Println("[Login] BindingBody error: ", &lp)
-		response.R400(c)
+	var up userPayload
+
+	if err := utils.BindingReqBody(c, &up); err != nil {
+		response.R400(c, err.Error())
 		return
 	}
 
-	user, err := ac.Service.Login(lp.Username, lp.Password)
+	if err := utils.Validate.Struct(&up); err != nil {
+		response.R400(c, utils.ParseErrorMsg(up, err))
+		return
+	}
+
+	user, err := ac.Service.Login(up.Username, up.Password)
 	if err != nil {
-		response.R400(c)
+		response.R400(c, err.Error())
 		return
 	}
 
@@ -40,16 +43,21 @@ func (ac *AuthController) Login(c *gin.Context) {
 }
 
 func (ac *AuthController) Register(c *gin.Context) {
-	var lp LoginPayload
-	if err := utils.BindingBody(c, &lp); err != nil {
-		response.R400(c)
+	var up userPayload
+	if err := utils.BindingReqBody(c, &up); err != nil {
+		response.R400(c, err.Error())
 		return
 	}
 
-	isCreated, err := ac.Service.Register(lp.Username, lp.Password)
+	if err := utils.Validate.Struct(&up); err != nil {
+		response.R400(c, utils.ParseErrorMsg(up, err))
+		return
+	}
+
+	isCreated, err := ac.Service.Register(up.Username, up.Password)
 
 	if err != nil {
-		response.R400(c)
+		response.R400(c, err.Error())
 		return
 	}
 
