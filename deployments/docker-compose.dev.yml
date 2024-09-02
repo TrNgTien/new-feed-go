@@ -17,7 +17,7 @@ services:
   new-feed-minio:
     image: "bitnami/minio:2024.4.6"
     container_name: new-feed-minio
-    restart: always
+    restart: unless-stopped
     ports:
       - 9000:9000
       - 9001:9001
@@ -32,14 +32,14 @@ services:
   mysql:
     image: mysql:8.3.0
     container_name: new-feed-mysql
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: new_feed
       MYSQL_DATABASE: new-feed
     ports:
-        - "3306:3306"
+      - "3306:3306"
     volumes:
-      - ../volumes/mysql-data:/bitnami/mysql/data
+      - ../volumes/mysql-data:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
     networks:
       - new-feed-network

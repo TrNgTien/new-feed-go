@@ -2,22 +2,20 @@ package cache
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/TrNgTien/new-feed-go/internal/configs"
-	redis "github.com/redis/go-redis/v9"
+	"github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
 )
 
 type RedisClient struct {
 	client *redis.Client
 }
 
-func NewRedisClient(
-	cacheConfig configs.Cache,
-) *RedisClient {
+func NewRedisClient(cacheConfig configs.Cache, l *zap.Logger) (*RedisClient, func(), error) {
+	l.Info("[InitRedisClient] Connecting to Redis")
 
-	fmt.Println("[InitRedisClient] Connecting redis!!")
 	client := redis.NewClient(&redis.Options{
 		Addr:     cacheConfig.Address,
 		Username: cacheConfig.Username,
@@ -25,26 +23,32 @@ func NewRedisClient(
 		DB:       0, // use default DB
 	})
 
-	fmt.Println("[InitRedisClient] Connected redis!!")
-	return &RedisClient{client: client}
+	_, err := client.Ping(context.Background()).Result()
+	if err != nil {
+		l.Error("[InitRedisClient] Error connecting to Redis")
+		return nil, nil, err
+	}
+
+	l.Info("[InitRedisClient] Connected to Redis")
+
+	cleanup := func() {
+		if err := client.Close(); err != nil {
+			l.Error("[InitRedisClient] Error closing Redis connection")
+		}
+	}
+
+	return &RedisClient{client: client}, cleanup, nil
 }
 
 func (c *RedisClient) Get(ctx context.Context, key string) (any, error) {
 	val, err := c.client.Get(ctx, key).Result()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	return val, nil
 }
 
 func (c *RedisClient) Set(ctx context.Context, key string, data any, ttl time.Duration) error {
-
-	err := c.client.Set(ctx, key, data, ttl).Err()
-
-	if err != nil {
-		panic(err)
-	}
-
-	return nil
+	return c.client.Set(ctx, key, data, ttl).Err()
 }

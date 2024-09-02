@@ -17,7 +17,9 @@ func server() *cobra.Command {
 		Use:  "new-feed-go",
 		Long: "Start standalone server for new-feed-go",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			app, err := wiring.InitializeServer()
+			app, cleanup, err := wiring.InitializeServer()
+
+			defer cleanup()
 
 			if err != nil {
 				return err

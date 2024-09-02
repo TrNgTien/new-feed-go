@@ -22,7 +22,7 @@ build:
 	go build -o cmd/${PROJECT_NAME}/*.go
 
 .PHONY: run
-run:
+run: lint generate
 	go run cmd/${PROJECT_NAME}/*.go new-feed-go
 
 .PHONY: dc-down

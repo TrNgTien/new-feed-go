@@ -1,0 +1,16 @@
+database:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: new_feed
+  database: new-feed
+cache:
+  type: "redis"
+  address: "127.0.0.1:6379"
+  username: ""
+  password: ""
+minio:
+  address: "127.0.0.1:9000"
+  username: "root"
+  password: "root.123"
+  bucket: "new-feed"

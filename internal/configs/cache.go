@@ -1,4 +1,5 @@
 package configs
+
 type CacheType string
 
 const (

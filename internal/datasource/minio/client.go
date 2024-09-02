@@ -1,14 +1,14 @@
 package minio
 
 import (
-	"fmt"
-
+	"github.com/TrNgTien/new-feed-go/internal/configs"
 	"github.com/TrNgTien/new-feed-go/internal/utils"
 	min "github.com/minio/minio-go"
+	"go.uber.org/zap"
 )
 
-func NewMinioClient() *min.Client {
-	fmt.Println("[InitMysql] Connecting Minio!!")
+func NewMinioClient(minioConfig configs.Storage, logger *zap.Logger) (*min.Client, func(), error) {
+	logger.Info("[InitMinio] Connecting to Minio")
 
 	client, err := min.New(utils.GetValueEnv("APP_ENV_MINIO_ENDPOINT", "localhost:9000"),
 		utils.GetValueEnv("APP_ENV_MINIO_ACCESS_KEY", "minio-root"),
@@ -16,10 +16,15 @@ func NewMinioClient() *min.Client {
 		false)
 
 	if err != nil {
-		panic(err)
+		logger.Error("[InitMinio] Error connecting to Minio", zap.Error(err))
+		return nil, nil, err
 	}
 
-	fmt.Println("[InitMysql] Connected Minio!!")
-	return client
+	logger.Info("[InitMinio] Connected to Minio")
 
+	cleanup := func() {
+		logger.Info("[InitMinio] Cleanup function called")
+	}
+
+	return client, cleanup, nil
 }
