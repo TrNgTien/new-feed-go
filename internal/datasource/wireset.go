@@ -1,18 +1,14 @@
 package datasource
 
 import (
-	"github.com/TrNgTien/new-feed-go/internal/configs"
 	"github.com/TrNgTien/new-feed-go/internal/datasource/cache"
 	"github.com/TrNgTien/new-feed-go/internal/datasource/minio"
 	"github.com/TrNgTien/new-feed-go/internal/datasource/mysql"
+	"github.com/google/wire"
 )
 
-func InitDatasource() {
-	cacheConfigs := configs.Cache{
-		Address: "localhost:6379",
-	}
-
-	mysql.InitMysql()
-	cache.InitRedisClient(cacheConfigs)
-	minio.Init()
-}
+var WireSet = wire.NewSet(
+	minio.WireSet,
+	mysql.WireSet,
+	cache.WireSet,
+)

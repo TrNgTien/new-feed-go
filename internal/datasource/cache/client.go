@@ -9,14 +9,16 @@ import (
 	redis "github.com/redis/go-redis/v9"
 )
 
-var client *redis.Client
+type RedisClient struct {
+	client *redis.Client
+}
 
-func InitRedisClient(
+func NewRedisClient(
 	cacheConfig configs.Cache,
-) {
+) *RedisClient {
 
 	fmt.Println("[InitRedisClient] Connecting redis!!")
-	client = redis.NewClient(&redis.Options{
+	client := redis.NewClient(&redis.Options{
 		Addr:     cacheConfig.Address,
 		Username: cacheConfig.Username,
 		Password: cacheConfig.Password,
@@ -24,10 +26,11 @@ func InitRedisClient(
 	})
 
 	fmt.Println("[InitRedisClient] Connected redis!!")
+	return &RedisClient{client: client}
 }
 
-func Get(ctx context.Context, key string) (any, error) {
-	val, err := client.Get(ctx, key).Result()
+func (c *RedisClient) Get(ctx context.Context, key string) (any, error) {
+	val, err := c.client.Get(ctx, key).Result()
 	if err != nil {
 		panic(err)
 	}
@@ -35,9 +38,9 @@ func Get(ctx context.Context, key string) (any, error) {
 	return val, nil
 }
 
-func Set(ctx context.Context, key string, data any, ttl time.Duration) error {
+func (c *RedisClient) Set(ctx context.Context, key string, data any, ttl time.Duration) error {
 
-	err := client.Set(ctx, key, data, ttl).Err()
+	err := c.client.Set(ctx, key, data, ttl).Err()
 
 	if err != nil {
 		panic(err)
