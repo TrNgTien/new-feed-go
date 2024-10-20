@@ -12,8 +12,10 @@ require (
 )
 
 require (
-	github.com/doug-martin/goqu/v9 v9.19.0 // indirect
+	github.com/c2fo/testify v0.0.0-20150827203832-fba96363964a // indirect
 	go.uber.org/multierr v1.10.0 // indirect
+	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
+	gopkg.in/doug-martin/goqu.v5 v5.0.0 // indirect
 )
 
 require (
@@ -30,8 +32,7 @@ require (
 	github.com/go-ini/ini v1.67.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator v9.31.0+incompatible
-	github.com/go-playground/validator/v10 v10.22.0 // indirect
+	github.com/go-playground/validator/v10 v10.22.0
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
